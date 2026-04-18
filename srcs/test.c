@@ -6,103 +6,144 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:52:10 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/17 21:33:48 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/19 00:21:23 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <pthread.h>
+// #include <stdio.h>
+// #include <pthread.h>
+// #include <unistd.h>
 
-#define TIMES_TO_COUNT 21000
+// typedef struct s_mut
+// {
+//     pthread_mutex_t mutex;
+//     int i;
+// }   t_mut;
 
-typedef struct s_locks
-{
-    pthread_mutex_t lock_1;
-    pthread_mutex_t lock_2;
-    unsigned int count;
-}   t_locks;
+// void    *go1(void *data)
+// {
+//     char    *str;
+//     int i = 0;
+//     t_mut   *lock;
 
-void    *thread_1_routine(void *data)
-{
-    pthread_t tid;
-    t_locks *locks;
-    int i;
+//     lock = (t_mut *)data;
+//     str = "tread 1 : hello\n";
+//     // pthread_mutex_lock(&lock->mutex);
+//     (void)lock;
+//     while (str[i])
+//     {
+//         write(1, &str[i], 1);
+//         i++;
+//     }
+//     // pthread_mutex_unlock(&lock->mutex);
+//     return (NULL);
+// }
 
-    tid = pthread_self();
-    locks = (t_locks *)data;
-    i = 0;
+// int main(void)
+// {
+//     pthread_t tid1;
+//     pthread_t tid2;
+//     t_mut   lock;
 
-    printf("Thread %p veut verrouiller lock 1\n", (void *)tid);
-    pthread_mutex_lock(&locks->lock_1);
-    printf("Thread %p possède lock 1\n", (void *)tid);
-    printf("Thread %p veut verrouiller lock 2\n", (void *)tid);
-    pthread_mutex_lock(&locks->lock_2);
-    printf("Thread %p possède lock 2\n", (void *)tid);
-    while (i < TIMES_TO_COUNT)
-    {
-        locks->count += 1;
-        i++;        
-    }
-    printf("Thread %p déverrouille lock 2\n", (void *)tid);
-    pthread_mutex_unlock(&locks->lock_2);
-    printf("Thread %p déverrouille lock 1\n", (void *)tid);
-    pthread_mutex_unlock(&locks->lock_1);
-    printf("Thread %p : Terminé !\n", (void *)tid);
-    return (NULL);
-}
+//     lock.i = 3;
 
-void    *thread_2_routine(void *data)
-{
-    pthread_t tid;
-    t_locks *locks;
-    int i;
+//     pthread_mutex_init(&lock.mutex, NULL);
+//     pthread_create(&tid1, NULL, go1, &lock);
+//     pthread_create(&tid2, NULL, go1, &lock);
 
-    tid = pthread_self();
-    locks = (t_locks *)data;
-    i = 0;
+//     pthread_join(tid2, NULL);
+// }
+
+// #define TIMES_TO_COUNT 21000
+
+// typedef struct s_locks
+// {
+//     pthread_mutex_t lock_1;
+//     pthread_mutex_t lock_2;
+//     unsigned int count;
+// }   t_locks;
+
+// void    *thread_1_routine(void *data)
+// {
+//     pthread_t tid;
+//     t_locks *locks;
+//     int i;
+
+//     tid = pthread_self();
+//     locks = (t_locks *)data;
+//     i = 0;
+
+//     printf("Thread %p veut verrouiller lock 1\n", (void *)tid);
+//     pthread_mutex_lock(&locks->lock_1);
+//     printf("Thread %p possède lock 1\n", (void *)tid);
+//     printf("Thread %p veut verrouiller lock 2\n", (void *)tid);
+//     pthread_mutex_lock(&locks->lock_2);
+//     printf("Thread %p possède lock 2\n", (void *)tid);
+//     while (i < TIMES_TO_COUNT)
+//     {
+//         locks->count += 1;
+//         i++;        
+//     }
+//     printf("Thread %p déverrouille lock 2\n", (void *)tid);
+//     pthread_mutex_unlock(&locks->lock_2);
+//     printf("Thread %p déverrouille lock 1\n", (void *)tid);
+//     pthread_mutex_unlock(&locks->lock_1);
+//     printf("Thread %p : Terminé !\n", (void *)tid);
+//     return (NULL);
+// }
+
+// void    *thread_2_routine(void *data)
+// {
+//     pthread_t tid;
+//     t_locks *locks;
+//     int i;
+
+//     tid = pthread_self();
+//     locks = (t_locks *)data;
+//     i = 0;
     
-    printf("Thread %p veut verrouiller lock 2\n", (void *)tid);
-    pthread_mutex_lock(&locks->lock_2);
-    printf("Thread %p possède lock 2\n", (void *)tid);
-    printf("Thread %p veut verrouiller lock 1\n", (void *)tid);
-    pthread_mutex_lock(&locks->lock_1);
-    printf("Thread %p possède lock 1\n", (void *)tid);
-    while (i < TIMES_TO_COUNT)
-    {
-        locks->count += 1;
-        i++;        
-    }
-    printf("Thread %p déverrouille lock 1\n", (void *)tid);
-    pthread_mutex_unlock(&locks->lock_1);
-    printf("Thread %p déverrouille lock 2\n", (void *)tid);
-    pthread_mutex_unlock(&locks->lock_2);
-    printf("Thread %p : Terminé !\n", (void *)tid);
-    return (NULL);
-}
+//     printf("Thread %p veut verrouiller lock 2\n", (void *)tid);
+//     pthread_mutex_lock(&locks->lock_2);
+//     printf("Thread %p possède lock 2\n", (void *)tid);
+//     printf("Thread %p veut verrouiller lock 1\n", (void *)tid);
+//     pthread_mutex_lock(&locks->lock_1);
+//     printf("Thread %p possède lock 1\n", (void *)tid);
+//     while (i < TIMES_TO_COUNT)
+//     {
+//         locks->count += 1;
+//         i++;        
+//     }
+//     printf("Thread %p déverrouille lock 1\n", (void *)tid);
+//     pthread_mutex_unlock(&locks->lock_1);
+//     printf("Thread %p déverrouille lock 2\n", (void *)tid);
+//     pthread_mutex_unlock(&locks->lock_2);
+//     printf("Thread %p : Terminé !\n", (void *)tid);
+//     return (NULL);
+// }
 
-int main(void)
-{
-    pthread_t tid1;
-    pthread_t tid2;
-    t_locks locks;
+// int main(void)
+// {
+//     pthread_t tid1;
+//     pthread_t tid2;
+//     t_locks locks;
 
-    locks.count = 0;
+//     locks.count = 0;
 
-    pthread_mutex_init(&locks.lock_1, NULL);
-    pthread_mutex_init(&locks.lock_2, NULL);
+//     pthread_mutex_init(&locks.lock_1, NULL);
+//     pthread_mutex_init(&locks.lock_2, NULL);
 
-    pthread_create(&tid1, NULL, thread_1_routine, &locks);
-    printf("Création 1er thread\n");
-    pthread_create(&tid2, NULL, thread_2_routine, &locks);
-    printf("Création 2è thread\n");
+//     pthread_create(&tid1, NULL, thread_1_routine, &locks);
+//     printf("Création 1er thread\n");
+//     pthread_create(&tid2, NULL, thread_2_routine, &locks);
+//     printf("Création 2è thread\n");
 
-    pthread_join(tid1, NULL);
-    printf("Union 1er thread\n");
-    pthread_join(tid2, NULL);
-    printf("Union 2è thread\n");
+//     pthread_join(tid1, NULL);
+//     printf("Union 1er thread\n");
+//     pthread_join(tid2, NULL);
+//     printf("Union 2è thread\n");
 
-    printf("FIN - Final count : %u\n", locks.count);
-}
+//     printf("FIN - Final count : %u\n", locks.count);
+// }
 
 // typedef struct s_counter
 // {
