@@ -6,13 +6,13 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:52:10 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/19 00:21:23 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/21 09:32:14 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <stdio.h>
-// #include <pthread.h>
-// #include <unistd.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
 
 // typedef struct s_mut
 // {
@@ -28,14 +28,33 @@
 
 //     lock = (t_mut *)data;
 //     str = "tread 1 : hello\n";
-//     // pthread_mutex_lock(&lock->mutex);
-//     (void)lock;
+//     pthread_mutex_lock(&lock->mutex);
+//     // (void)lock;
 //     while (str[i])
 //     {
 //         write(1, &str[i], 1);
 //         i++;
 //     }
-//     // pthread_mutex_unlock(&lock->mutex);
+//     pthread_mutex_unlock(&lock->mutex);
+//     return (NULL);
+// }
+
+// void    *go2(void *data)
+// {
+//     char    *str;
+//     int i = 0;
+//     t_mut   *lock;
+
+//     lock = (t_mut *)data;
+//     str = "tread 1 : hello\n";
+//     pthread_mutex_lock(&lock->mutex);
+//     // (void)lock;
+//     while (str[i])
+//     {
+//         write(1, &str[i], 1);
+//         i++;
+//     }
+//     pthread_mutex_unlock(&lock->mutex);
 //     return (NULL);
 // }
 
@@ -43,14 +62,19 @@
 // {
 //     pthread_t tid1;
 //     pthread_t tid2;
-//     t_mut   lock;
+//     t_mut   lock1;
+//     t_mut   lock2;
 
-//     lock.i = 3;
+//     lock1.i = 3;
+//     lock2.i = 3;
 
-//     pthread_mutex_init(&lock.mutex, NULL);
-//     pthread_create(&tid1, NULL, go1, &lock);
-//     pthread_create(&tid2, NULL, go1, &lock);
-
+//     pthread_mutex_init(&lock1.mutex, NULL);
+//     pthread_mutex_init(&lock2.mutex, NULL);
+//     pthread_create(&tid1, NULL, go1, &lock1);
+//     pthread_create(&tid2, NULL, go2, &lock2);
+//     pthread_mutex_destroy(&lock1.mutex);
+//     pthread_mutex_destroy(&lock2.mutex);
+//     pthread_join(tid1, NULL);
 //     pthread_join(tid2, NULL);
 // }
 

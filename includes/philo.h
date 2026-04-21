@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/19 01:40:27 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/21 10:23:17 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,21 @@ typedef struct s_data
 	t_lock	*forks; // tableau des forks = mutex
 	t_philo	*philos; // tableau de nos philosophes
 }	t_data;
+
+/* PARSING */
+int check_data(t_data *data);
+int parse_data(t_data *data, char **argv);
+
+
+/* INIT */
+void    init_data(t_data *data);
+
+/* PHILO */
+void    *philo_routine(void *arg);
+
+/* UTILS */
+long    get_time_in_s_ms(void);
+long    get_current_time_in_ms(t_data *data);
+int     ft_usleep(long milliseconds);
 
 #endif
