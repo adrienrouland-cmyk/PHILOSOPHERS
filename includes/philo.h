@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/21 10:23:17 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/22 01:14:43 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_data
 	long	time_to_sleep;
 	int		nb_must_meals;
 	long	start_time;
+	pthread_mutex_t	write_lock;
 	t_lock	*forks; // tableau des forks = mutex
 	t_philo	*philos; // tableau de nos philosophes
 }	t_data;
@@ -68,5 +69,6 @@ void    *philo_routine(void *arg);
 long    get_time_in_s_ms(void);
 long    get_current_time_in_ms(t_data *data);
 int     ft_usleep(long milliseconds);
+void    print_status(t_data *data, int philo_id, char *msg);
 
 #endif

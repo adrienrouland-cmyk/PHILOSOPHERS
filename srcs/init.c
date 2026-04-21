@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 09:45:45 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/21 10:09:43 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/22 01:19:16 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void    init_data(t_data *data)
     if (!data->philos)
         return ;
     data->forks = malloc(sizeof(t_lock) * data->nb_philos);
+    pthread_mutex_init(&data->write_lock, NULL);
     if (!data->forks)
         return ;
     while (i < data->nb_philos)

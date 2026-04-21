@@ -6,11 +6,21 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 10:01:16 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/21 10:23:07 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/22 01:21:25 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+void    print_status(t_data *data, int philo_id, char *msg)
+{
+    pthread_mutex_lock(&data->write_lock);
+    if (data->stop_simu == 0)
+    {
+        printf("%ld %d %s\n", get_current_time_in_ms(data), philo_id, msg);
+    }
+    pthread_mutex_unlock(&data->write_lock);
+}
 
 long    get_time_in_s_ms(void)
 {

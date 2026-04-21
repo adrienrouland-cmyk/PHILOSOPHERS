@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/21 10:37:00 by arouland         ###   ########.fr       */
+/*   Updated: 2026/04/22 01:21:44 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,34 +24,53 @@ void    start_simu(t_data *data)
         pthread_create(&data->philos[i].tid, NULL, philo_routine, &data->philos[i]);
         i++;
     }
-    while (i < data->nb_philos)
-    {
-        pthread_join(data->philos[i].tid, NULL);
-        i++;
-    }
 }
 
 // Vidéo -> set bool pour commencer toutes les routines en même temps
 
 void    philo_sleep(t_data *data, t_philo *philo)
 {
-    printf("%ld %d is sleeping\n", get_current_time_in_ms(data), philo->id);
+    print_status(data, philo->id, "is sleeping");
     ft_usleep(data->time_to_sleep);
 }
 
 void    philo_think(t_data *data, t_philo *philo)
 {
-    printf("%ld %d is thinking\n", get_current_time_in_ms(data), philo->id);
+    print_status(data, philo->id, "is thinking");
 }
 
 void    philo_eat(t_data *data, t_philo *philo)
 {
     // Check si y'a les deux fourchettes ?
     
-    printf("%ld %d is eating\n", get_current_time_in_ms(data), philo->id);
+    print_status(data, philo->id, "is eating");
     philo->last_meal_time = get_current_time_in_ms(data);
     philo->nb_meals++;
     ft_usleep(data->time_to_eat);
+}
+
+void    take_forks(t_data *data, t_philo *philo)
+{
+    if (philo->id % 2 == 0)
+    {
+        pthread_mutex_lock(&philo->right_fork->fork);
+        print_status(data, philo->id, "has taken a fork");
+        pthread_mutex_lock(&philo->left_fork->fork);
+        print_status(data, philo->id, "has taken a fork");
+    }
+    else
+    {
+        pthread_mutex_lock(&philo->left_fork->fork);
+        print_status(data, philo->id, "has taken a fork");
+        pthread_mutex_lock(&philo->right_fork->fork);
+        print_status(data, philo->id, "has taken a fork");
+    }
+}
+
+void    drop_forks(t_philo *philo)
+{
+    pthread_mutex_unlock(&philo->right_fork->fork);
+    pthread_mutex_unlock(&philo->left_fork->fork);
 }
 
 void    *philo_routine(void *arg)
@@ -61,7 +80,7 @@ void    *philo_routine(void *arg)
     
     philo = (t_philo *)arg;
     data = philo->data;
-    printf("Début routine\n");
+    // printf("Début routine\n");
 
     // Gestion impair
         // -> ici sûrement attendre un peu si le philo est impair
@@ -73,20 +92,20 @@ void    *philo_routine(void *arg)
     {
         // is full? ->
         
-        printf("Entrée boucle\n");
-        printf("Je suis philo n° : %d\n", philo->id);
+        // printf("Entrée boucle\n");
+        // printf("Je suis philo n° : %d\n", philo->id);
 
         // --- EAT ----
         
-            // take forks -> faire fonction
+        take_forks(data, philo);
         philo_eat(data, philo);
-            // drop forks -> faire fonction
+        drop_forks(philo);
         
             // --- SLEEP ----
         philo_sleep(data, philo);
         // ---- THINK ----
         philo_think(data, philo);
-        break;
+        // break;
     }
 
     // La routine est une boucle qui continue tant que is_stop != 1
@@ -97,6 +116,18 @@ void    *philo_routine(void *arg)
     // sleep philo
     // think
     return (NULL);
+}
+
+void    join_all_threads(t_data *data)
+{
+    int i;
+    
+    i = 0;
+    while (i < data->nb_philos)
+    {
+        pthread_join(data->philos[i].tid, NULL);
+        i++;
+    }
 }
 
 int	main(int argc, char *argv[])
@@ -131,8 +162,23 @@ int	main(int argc, char *argv[])
     printf("Diff: %ld\n", newtime - timenow);
     
     start_simu(data);
+    while (data->stop_simu == 0)
+    {
+        int i = 0;
+        while (i < data->nb_philos)
+        {
+            // printf(" 1. %ld 2. %ld \n", get_current_time_in_ms(data) - data->philos[i].last_meal_time, data->time_to_die);
+            if (get_current_time_in_ms(data) - data->philos[i].last_meal_time > data->time_to_die)
+            {
+                data->stop_simu = 1;
+                printf("%ld %d has died\n", get_current_time_in_ms(data), data->philos[i].id);
+                break;
+            }
+            i++;
+        }
+    }
     // -----------------------------------------
-    return (0);
+    join_all_threads(data);
 }
 //./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 // ./philo 5 800 200 200
