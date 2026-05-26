@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 12:48:17 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/21 10:11:12 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/26 23:08:41 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ int parse_data(t_data *data, char **argv)
     data->time_to_sleep = ft_atol(argv[4]);
     if (argv[5])
         data->nb_must_meals = (int)ft_atol(argv[5]);
+    else
+        data->nb_must_meals = -1;
     return (0);
 }
 // Parse les arguments et les attribue

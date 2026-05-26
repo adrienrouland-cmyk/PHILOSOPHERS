@@ -6,11 +6,23 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/22 01:21:44 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:08:03 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+// ATTENTION MODIFIER LE MAKEFILE ENLEVER FSANITIZE !!
+
+int     check_stop_status(t_data *data)
+{
+    int status;
+
+    pthread_mutex_lock(&data->monitor_lock);
+    status = data->stop_simu;
+    pthread_mutex_unlock(&data->monitor_lock);
+    return (status);
+}
 
 void    start_simu(t_data *data)
 {
@@ -44,8 +56,11 @@ void    philo_eat(t_data *data, t_philo *philo)
     // Check si y'a les deux fourchettes ?
     
     print_status(data, philo->id, "is eating");
+    pthread_mutex_lock(&data->monitor_lock);
+    // Monitor lock car check last_meal_time, doit pas checker en même temps que écriture
     philo->last_meal_time = get_current_time_in_ms(data);
     philo->nb_meals++;
+    pthread_mutex_unlock(&data->monitor_lock);
     ft_usleep(data->time_to_eat);
 }
 
@@ -87,8 +102,15 @@ void    *philo_routine(void *arg)
         // ou gérer l'odre mutex lock left/rigght selon id % 2
     // Du coup bien synchroniser tous les philos pour que les routines commencent en même temps
     // ça on peut le faire avec un booléen dans t_data qui conditionnerait le début de la routine.
-    
-    while(data->stop_simu == 0)
+     if (data->nb_philos == 1)
+    {
+        pthread_mutex_lock(&philo->left_fork->fork);
+        print_status(data, philo->id, "has taken a fork");
+        ft_usleep(data->time_to_die);
+        pthread_mutex_unlock(&philo->left_fork->fork);
+        return (NULL);
+    }
+    while(check_stop_status(data) == 0)
     {
         // is full? ->
         
@@ -107,18 +129,10 @@ void    *philo_routine(void *arg)
         philo_think(data, philo);
         // break;
     }
-
-    // La routine est une boucle qui continue tant que is_stop != 1
-    
-    // take forks
-    // eat
-    // put_forks
-    // sleep philo
-    // think
     return (NULL);
 }
 
-void    join_all_threads(t_data *data)
+void    stop_and_clean_simu(t_data *data)
 {
     int i;
     
@@ -128,6 +142,39 @@ void    join_all_threads(t_data *data)
         pthread_join(data->philos[i].tid, NULL);
         i++;
     }
+    i = 0;
+    while (i < data->nb_philos)
+    {
+        pthread_mutex_destroy(&data->forks[i].fork);
+        i++;
+    }
+    pthread_mutex_destroy(&data->write_lock);
+    pthread_mutex_destroy(&data->monitor_lock);
+    free(data->philos);
+    free(data->forks);
+    free(data);
+}
+
+int is_all_philos_full(t_data *data)
+{
+    int i;
+
+    i = 0;
+    if (data->nb_must_meals == -1)
+        return (0);
+    while (i < data->nb_philos)
+    {
+        pthread_mutex_lock(&data->monitor_lock);
+        // Accès à nb_meals, pour éviter datarace on le lock en lecture et écriture
+        if (data->philos[i].nb_meals < data->nb_must_meals)
+        {
+            pthread_mutex_unlock(&data->monitor_lock);
+            return (0);
+        }
+        pthread_mutex_unlock(&data->monitor_lock);
+        i++;
+    }
+    return (1);
 }
 
 int	main(int argc, char *argv[])
@@ -155,30 +202,46 @@ int	main(int argc, char *argv[])
     //1776533395091 -> xxx95 = secondes entières; 091 = millisecondes
     printf("Timeval sec + usec: %ld\n", data->start_time);
     long timenow = get_time_in_s_ms();
-    printf("gettime: %ld\n", timenow);
+    printf("gettime timemow: %ld\n", timenow);
     ft_usleep(data->time_to_sleep);
     long newtime = get_time_in_s_ms();
-    printf("gettime: %ld\n", newtime);
+    printf("gettime newtime: %ld\n", newtime);
     printf("Diff: %ld\n", newtime - timenow);
-    
     start_simu(data);
-    while (data->stop_simu == 0)
+    // --- Thread de monitoring ---
+    while (check_stop_status(data) == 0)
     {
         int i = 0;
         while (i < data->nb_philos)
         {
             // printf(" 1. %ld 2. %ld \n", get_current_time_in_ms(data) - data->philos[i].last_meal_time, data->time_to_die);
-            if (get_current_time_in_ms(data) - data->philos[i].last_meal_time > data->time_to_die)
+            long current_time = get_current_time_in_ms(data);
+            // Pour éviter data race en l'appelant danss le lock
+            pthread_mutex_lock(&data->monitor_lock);
+            // on mutex le monitor lock car philos écrivent last meal time tout le temps
+            if (current_time - data->philos[i].last_meal_time > data->time_to_die)
             {
                 data->stop_simu = 1;
-                printf("%ld %d has died\n", get_current_time_in_ms(data), data->philos[i].id);
+                pthread_mutex_unlock(&data->monitor_lock);
+                // si has died on sort ici
+                print_status(data, data->philos[i].id, "has died");
                 break;
             }
+            pthread_mutex_unlock(&data->monitor_lock);
             i++;
+        }
+        if ((data->nb_must_meals != 1) && is_all_philos_full(data) == 1)
+        {
+            pthread_mutex_lock(&data->monitor_lock);
+            data->stop_simu = 1;
+            pthread_mutex_unlock(&data->monitor_lock);
+            printf("All philosophers ate %d times\n", data->nb_must_meals);
+            break ;
         }
     }
     // -----------------------------------------
-    join_all_threads(data);
+    stop_and_clean_simu(data);
+    return (0);
 }
 //./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 // ./philo 5 800 200 200

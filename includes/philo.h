@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/22 01:14:43 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 00:07:59 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_philo
 	pthread_t tid;
 	int		id;
 	int		nb_meals;
-	int		is_full;
+	// int		is_full;
 	long	last_meal_time;
 	t_lock	*left_fork;
 	t_lock	*right_fork;
@@ -50,6 +50,7 @@ typedef struct s_data
 	int		nb_must_meals;
 	long	start_time;
 	pthread_mutex_t	write_lock;
+	pthread_mutex_t	monitor_lock;
 	t_lock	*forks; // tableau des forks = mutex
 	t_philo	*philos; // tableau de nos philosophes
 }	t_data;

@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 09:45:45 by arouland          #+#    #+#             */
-/*   Updated: 2026/04/22 01:19:16 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 00:13:28 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,15 @@ void    init_data(t_data *data)
     if (!data->philos)
         return ;
     data->forks = malloc(sizeof(t_lock) * data->nb_philos);
-    pthread_mutex_init(&data->write_lock, NULL);
     if (!data->forks)
         return ;
+    pthread_mutex_init(&data->write_lock, NULL);
     while (i < data->nb_philos)
     {
         pthread_mutex_init(&data->forks[i].fork, NULL); // init les n forks
         data->philos[i].data = data;
         data->philos[i].id = i + 1;
         data->philos[i].nb_meals = 0;
-        data->philos[i].is_full = 0;
         data->philos[i].last_meal_time = 0;
 
         // attribuer les forks aussi.

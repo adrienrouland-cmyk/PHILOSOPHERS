@@ -3,7 +3,7 @@ NAME = philo
 SRCS = $(wildcard srcs/*.c)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread
 
 OBJS = $(SRCS:.c=.o)
 

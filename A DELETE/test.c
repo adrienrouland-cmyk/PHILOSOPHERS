@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:52:10 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/26 12:52:34 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/26 14:18:55 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,8 @@
 //     pthread_join(tid2, NULL);
 //     printf("Main : Union du second thread %p\n", (void *)tid2);
 // }
+
+/**** Erreur synchronisation */
 
 // void    *thread_routine(void *data)
 // {
