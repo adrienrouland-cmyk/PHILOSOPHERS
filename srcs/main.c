@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:37:13 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:40:59 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ int	main(int argc, char *argv[])
             pthread_mutex_unlock(&data->monitor_lock);
             i++;
         }
-        if ((data->nb_must_meals != 1) && is_all_philos_full(data) == 1)
+        if ((data->nb_must_meals != -1) && is_all_philos_full(data) == 1)
         {
             pthread_mutex_lock(&data->monitor_lock);
             data->stop_simu = 1;
