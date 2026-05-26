@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:08:03 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:19:15 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,18 +162,18 @@ int is_all_philos_full(t_data *data)
     i = 0;
     if (data->nb_must_meals == -1)
         return (0);
+    pthread_mutex_lock(&data->monitor_lock);
     while (i < data->nb_philos)
     {
-        pthread_mutex_lock(&data->monitor_lock);
         // Accès à nb_meals, pour éviter datarace on le lock en lecture et écriture
         if (data->philos[i].nb_meals < data->nb_must_meals)
         {
             pthread_mutex_unlock(&data->monitor_lock);
             return (0);
         }
-        pthread_mutex_unlock(&data->monitor_lock);
         i++;
     }
+    pthread_mutex_unlock(&data->monitor_lock);
     return (1);
 }
 
@@ -217,8 +217,8 @@ int	main(int argc, char *argv[])
             // printf(" 1. %ld 2. %ld \n", get_current_time_in_ms(data) - data->philos[i].last_meal_time, data->time_to_die);
             long current_time = get_current_time_in_ms(data);
             // Pour éviter data race en l'appelant danss le lock
-            pthread_mutex_lock(&data->monitor_lock);
             // on mutex le monitor lock car philos écrivent last meal time tout le temps
+            pthread_mutex_lock(&data->monitor_lock);
             if (current_time - data->philos[i].last_meal_time > data->time_to_die)
             {
                 data->stop_simu = 1;

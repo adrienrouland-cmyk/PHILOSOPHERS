@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 09:45:45 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 00:13:28 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:18:13 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void    init_data(t_data *data)
     if (!data->forks)
         return ;
     pthread_mutex_init(&data->write_lock, NULL);
+    pthread_mutex_init(&data->monitor_lock, NULL);
     while (i < data->nb_philos)
     {
         pthread_mutex_init(&data->forks[i].fork, NULL); // init les n forks
