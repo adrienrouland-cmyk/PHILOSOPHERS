@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:19:15 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:27:56 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,16 +215,16 @@ int	main(int argc, char *argv[])
         while (i < data->nb_philos)
         {
             // printf(" 1. %ld 2. %ld \n", get_current_time_in_ms(data) - data->philos[i].last_meal_time, data->time_to_die);
-            long current_time = get_current_time_in_ms(data);
-            // Pour éviter data race en l'appelant danss le lock
-            // on mutex le monitor lock car philos écrivent last meal time tout le temps
             pthread_mutex_lock(&data->monitor_lock);
-            if (current_time - data->philos[i].last_meal_time > data->time_to_die)
+            // on mutex le monitor lock car philos écrivent last meal time tout le temps
+            if (get_current_time_in_ms(data) - data->philos[i].last_meal_time > data->time_to_die)
             {
                 data->stop_simu = 1;
                 pthread_mutex_unlock(&data->monitor_lock);
+                pthread_mutex_lock(&data->write_lock);
+                printf("%ld %d %s\n", get_current_time_in_ms(data), data->philos[i].id, "has died");
+                pthread_mutex_unlock(&data->write_lock);
                 // si has died on sort ici
-                print_status(data, data->philos[i].id, "has died");
                 break;
             }
             pthread_mutex_unlock(&data->monitor_lock);
