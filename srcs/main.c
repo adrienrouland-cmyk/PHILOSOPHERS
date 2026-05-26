@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:27:56 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 01:37:13 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,10 +220,11 @@ int	main(int argc, char *argv[])
             if (get_current_time_in_ms(data) - data->philos[i].last_meal_time > data->time_to_die)
             {
                 data->stop_simu = 1;
-                pthread_mutex_unlock(&data->monitor_lock);
                 pthread_mutex_lock(&data->write_lock);
                 printf("%ld %d %s\n", get_current_time_in_ms(data), data->philos[i].id, "has died");
                 pthread_mutex_unlock(&data->write_lock);
+                // Le mettre avant pour éviter que soit skip.
+                pthread_mutex_unlock(&data->monitor_lock);
                 // si has died on sort ici
                 break;
             }
@@ -235,7 +236,9 @@ int	main(int argc, char *argv[])
             pthread_mutex_lock(&data->monitor_lock);
             data->stop_simu = 1;
             pthread_mutex_unlock(&data->monitor_lock);
+            pthread_mutex_lock(&data->write_lock);
             printf("All philosophers ate %d times\n", data->nb_must_meals);
+            pthread_mutex_unlock(&data->write_lock);
             break ;
         }
     }
