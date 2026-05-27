@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 09:45:45 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:18:13 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 12:49:59 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void    init_data(t_data *data)
 
     i = 0;
     data->stop_simu = 0;
-    data->start_time = get_time_in_s_ms();
+    data->all_philos_ready = 0;
     data->philos = malloc(sizeof(t_philo) * data->nb_philos);
     if (!data->philos)
         return ;
@@ -32,6 +32,7 @@ void    init_data(t_data *data)
         pthread_mutex_init(&data->forks[i].fork, NULL); // init les n forks
         data->philos[i].data = data;
         data->philos[i].id = i + 1;
+        data->philos[i].is_full = 0;
         data->philos[i].nb_meals = 0;
         data->philos[i].last_meal_time = 0;
 

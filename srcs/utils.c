@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 10:01:16 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 01:23:13 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/27 12:03:01 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,35 @@ int     ft_usleep(long milliseconds)
     while (get_time_in_s_ms() - start_time < milliseconds)
         usleep(500);
     return (0);
+}
+
+int     check_stop_status(t_data *data)
+{
+    int status;
+
+    pthread_mutex_lock(&data->monitor_lock);
+    status = data->stop_simu;
+    pthread_mutex_unlock(&data->monitor_lock);
+    return (status);
+}
+
+int is_all_philos_full(t_data *data)
+{
+    int i;
+
+    i = 0;
+    pthread_mutex_lock(&data->monitor_lock);
+    while (i < data->nb_philos)
+    {
+        if (data->philos[i].is_full == 0)
+        {
+            pthread_mutex_unlock(&data->monitor_lock);
+            return (0);
+        }
+        i++;
+    }
+    pthread_mutex_unlock(&data->monitor_lock);
+    return (1);
 }
 //usleep non précis donc on le fait par bloc de 500 microsecondes
 // Donc de 0,5 ms.
