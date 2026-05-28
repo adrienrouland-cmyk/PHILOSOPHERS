@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 22:24:22 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 11:52:12 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 18:18:29 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int parse_data(t_data *data, char **argv)
     int is_overflow;
     
     if (check_is_valid_digit(argv) == 1)
-        return (1);
+        return (write(2, "Non valid arguments\n", 20), 1);
     is_overflow = 0;
     data->nb_philos = (int)ft_atol_safe(argv[1], &is_overflow);
     data->time_to_die = ft_atol_safe(argv[2], &is_overflow);
