@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 22:00:03 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:48:26 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:35:45 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,5 @@ int	main(int argc, char **argv)
 		return (free(data), write(2, "Malloc errors\n", 14), 1);
 	philo_simulation(data);
 	stop_clean_simulation(data);
-    return (0);
+	return (0);
 }

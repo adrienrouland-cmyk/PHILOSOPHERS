@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:58:31 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:41:32 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:36:44 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ void	philo_think(t_philo *philo)
 	{
 		think_time = philo->data->time_to_die - (get_time_in_s_ms()
 				- get_long(&philo->data->monitor_lock, &philo->last_meal_time))
-			- get_long(&philo->data->monitor_lock, &philo->data->time_to_eat);
+			- philo->data->time_to_eat;
 		if (think_time < 0)
 			think_time = 0;
 		ft_usleep(think_time / 2, philo->data);
 	}
 }
 
-void	philo_eat(t_philo *philo)
+void	take_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
@@ -50,6 +50,10 @@ void	philo_eat(t_philo *philo)
 		pthread_mutex_lock(&philo->right_fork->fork);
 		print_status(philo->data, philo->id, "has taken a fork");
 	}
+}
+
+void	philo_eat(t_philo *philo)
+{
 	set_long(&philo->data->monitor_lock, &philo->last_meal_time,
 		get_time_in_s_ms());
 	print_status(philo->data, philo->id, "is eating");
@@ -74,6 +78,7 @@ void	*philo_routine(void *arg)
 		usleep(1500);
 	while (is_end_simu(philo->data) == 0)
 	{
+		take_forks(philo);
 		philo_eat(philo);
 		if (is_end_simu(philo->data) == 1)
 			break ;

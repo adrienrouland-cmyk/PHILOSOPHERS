@@ -6,11 +6,17 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:04:53 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:38:29 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:35:13 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+void	set_early_stop(t_data *data)
+{
+	set_bool(&data->monitor_lock, &data->stop_simu, 1);
+	set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
+}
 
 long	get_time_in_s_ms(void)
 {

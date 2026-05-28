@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:38:18 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:35:09 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_philo
 	t_lock				*left_fork;
 	t_lock				*right_fork;
 	t_data				*data;
+	int					thread_created;
 }						t_philo;
 
 typedef struct s_data
@@ -54,9 +55,8 @@ typedef struct s_data
 	pthread_mutex_t		write_lock;
 	pthread_mutex_t		monitor_lock;
 	t_lock				*forks;
-	// tableau des forks = mutex
 	t_philo				*philos;
-	// tableau de nos philosophes
+	int					monitor_created;
 }						t_data;
 
 /* PARSING */
@@ -86,6 +86,7 @@ int						check_stop_status(t_data *data);
 int						is_all_philos_full(t_data *data);
 int						is_end_simu(t_data *data);
 void					wait_all_threads(t_data *data);
+void					set_early_stop(t_data *data);
 
 /* GET-SET */
 void					set_bool(pthread_mutex_t *mutex, int *dest, int value);

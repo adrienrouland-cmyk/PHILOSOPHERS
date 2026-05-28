@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 22:24:22 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:39:50 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:21:21 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ int	parse_data(t_data *data, char **argv)
 		return (write(2, "Non valid arguments\n", 20), 1);
 	is_overflow = 0;
 	data->nb_philos = (int)ft_atol_safe(argv[1], &is_overflow);
-	data->time_to_die = ft_atol_safe(argv[2], &is_overflow);
-	data->time_to_eat = ft_atol_safe(argv[3], &is_overflow);
-	data->time_to_sleep = ft_atol_safe(argv[4], &is_overflow);
+	data->time_to_die = (long)ft_atol_safe(argv[2], &is_overflow);
+	data->time_to_eat = (long)ft_atol_safe(argv[3], &is_overflow);
+	data->time_to_sleep = (long)ft_atol_safe(argv[4], &is_overflow);
 	if (argv[5])
 		data->nb_must_meals = (int)ft_atol_safe(argv[5], &is_overflow);
 	else

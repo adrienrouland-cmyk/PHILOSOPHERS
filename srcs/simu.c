@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:44:18 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:52:20 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 19:35:30 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,12 @@ void	stop_clean_simulation(t_data *data)
 	i = 0;
 	while (i < data->nb_philos)
 	{
-		pthread_join(data->philos[i].tid, NULL);
+		if (data->philos[i].thread_created == 1)
+			pthread_join(data->philos[i].tid, NULL);
 		i++;
 	}
-	pthread_join(data->monitor_thread, NULL);
+	if (data->monitor_created == 1)
+		pthread_join(data->monitor_thread, NULL);
 	i = 0;
 	while (i < data->nb_philos)
 	{
@@ -50,45 +52,62 @@ void	stop_clean_simulation(t_data *data)
 	free(data);
 }
 
-void    lone_philo_simulation(t_data *data)
+void	lone_philo_simulation(t_data *data)
 {
-    pthread_create(&data->philos[0].tid, NULL, lone_philo_routine,
-			&data->philos[0]);
-    pthread_create(&data->monitor_thread, NULL, monitor_routine, data);
-    set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
-    set_long(&data->monitor_lock, &data->philos[0].last_meal_time,
-        data->start_time);
-    set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
+	if (pthread_create(&data->philos[0].tid, NULL, lone_philo_routine,
+			&data->philos[0]) != 0)
+	{
+		set_bool(&data->monitor_lock, &data->stop_simu, 1);
+		set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
+		return ;
+	}
+	data->philos[0].thread_created = 1;
+	if (pthread_create(&data->monitor_thread, NULL, monitor_routine, data) != 0)
+	{
+		set_bool(&data->monitor_lock, &data->stop_simu, 1);
+		set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
+		return ;
+	}
+	data->monitor_created = 1;
+	set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
+	set_long(&data->monitor_lock, &data->philos[0].last_meal_time,
+		data->start_time);
+	set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
+}
+
+void	multi_philo_simulation(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < data->nb_philos)
+	{
+		if (pthread_create(&data->philos[i].tid, NULL, philo_routine,
+				&data->philos[i]) != 0)
+		{
+			set_early_stop(data);
+			return ;
+		}
+		data->philos[i].thread_created = 1;
+	}
+	if (pthread_create(&data->monitor_thread, NULL, monitor_routine, data) != 0)
+	{
+		set_early_stop(data);
+		return ;
+	}
+	data->monitor_created = 1;
+	set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
+	i = -1;
+	while (++i < data->nb_philos)
+		set_long(&data->monitor_lock, &data->philos[i].last_meal_time,
+			data->start_time);
+	set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
 }
 
 void	philo_simulation(t_data *data)
 {
-	int	i;
-
-	i = 0;
 	if (data->nb_philos == 1)
-        lone_philo_simulation(data);
+		lone_philo_simulation(data);
 	else
-	{
-		while (i < data->nb_philos)
-		{
-			if (pthread_create(&data->philos[i].tid, NULL, philo_routine,
-					&data->philos[i]) != 0)
-			{
-				set_bool(&data->monitor_lock, &data->stop_simu, 1);
-				set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
-				while (--i >= 0)
-					pthread_join(data->philos[i].tid, NULL);
-				return ;
-			}
-			i++;
-		}
-		pthread_create(&data->monitor_thread, NULL, monitor_routine, data);
-		set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
-		i = -1;
-		while (++i < data->nb_philos)
-			set_long(&data->monitor_lock, &data->philos[i].last_meal_time,
-				data->start_time);
-		set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
-	}
+		multi_philo_simulation(data);
 }
