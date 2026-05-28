@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 18:27:30 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 18:38:50 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 20:06:10 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,12 @@
 void	print_status(t_data *data, int philo_id, char *msg)
 {
 	pthread_mutex_lock(&data->write_lock);
-	if (!is_end_simu(data))
+	pthread_mutex_lock(&data->monitor_lock);
+	if (!data->stop_simu)
 	{
 		printf("%ld %d %s\n", get_current_time_in_ms(data), philo_id, msg);
 	}
+	pthread_mutex_unlock(&data->monitor_lock);
 	pthread_mutex_unlock(&data->write_lock);
 }
 
