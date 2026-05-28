@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:58:31 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 17:09:44 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 17:49:02 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ void    philo_think(t_philo *philo)
     if (philo->data->nb_philos % 2 != 0)
     {
         think_time = philo->data->time_to_die - (get_time_in_s_ms()
-            - get_long(&philo->data->monitor_lock, &philo->last_meal_time)
-            - philo->data->time_to_eat);
+            - get_long(&philo->data->monitor_lock, &philo->last_meal_time))
+            - get_long(&philo->data->monitor_lock, &philo->data->time_to_eat);
 
         if (think_time < 0)
             think_time = 0;
@@ -52,13 +52,13 @@ void    philo_eat(t_philo *philo)
         pthread_mutex_lock(&philo->right_fork->fork);
         print_status(philo->data, philo->id, "has taken a fork");
     }
+    set_long(&philo->data->monitor_lock, &philo->last_meal_time, get_time_in_s_ms());
+    print_status(philo->data, philo->id, "is eating");
     pthread_mutex_lock(&philo->data->monitor_lock);
     philo->nb_meals++;
     if (philo->data->nb_must_meals > 0 && philo->nb_meals >= philo->data->nb_must_meals)
         philo->is_full = 1;
     pthread_mutex_unlock(&philo->data->monitor_lock);
-    print_status(philo->data, philo->id, "is eating");
-    set_long(&philo->data->monitor_lock, &philo->last_meal_time, get_time_in_s_ms());
     ft_usleep(philo->data->time_to_eat, philo->data);
     pthread_mutex_unlock(&philo->right_fork->fork);
     pthread_mutex_unlock(&philo->left_fork->fork);
