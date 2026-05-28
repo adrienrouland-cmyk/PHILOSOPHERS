@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:44:18 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 17:19:38 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 18:25:51 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void    philo_simulation(t_data *data)
         {
             if (pthread_create(&data->philos[i].tid, NULL, philo_routine, &data->philos[i]) != 0)
             {
+                set_bool(&data->monitor_lock, &data->stop_simu, 1);
+                set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
                 while(--i >= 0)
                     pthread_join(data->philos[i].tid, NULL);
                 return ;
