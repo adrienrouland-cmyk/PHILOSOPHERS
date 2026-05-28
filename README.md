@@ -11,6 +11,19 @@ Marge de sécurité en divisant par 2.
 **Instructions**
 
 
+To add in stop_clean_simulation to check the number of meals by philosophers
+
+    // --- Number of meals ---
+    printf("\n============ Bilan ============\n");
+    i = 0;
+    while (i < data->nb_philos)
+    {
+        printf("Philosophe %d has eaten %d meals.\n", 
+            data->philos[i].id, data->philos[i].nb_meals);
+        i++;
+    }
+    printf("================================================\n\n");
+    // -----------------------------------------------------------
 
 **Resources**
 

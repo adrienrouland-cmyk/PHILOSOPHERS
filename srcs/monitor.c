@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:01:40 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 16:38:16 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 17:07:46 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,13 @@ int     is_philo_dead(t_data *data)
 
 int     is_all_philos_full(t_data *data)
 {
-    // Doit check et set_bool stop_simu à 1
     int i;
     int full_philos;
     
     i = 0;
     full_philos = 0;
+    if (data->nb_must_meals == -1)
+        return (0);
     while (i < data->nb_philos)
     {
         if (get_bool(&data->monitor_lock, &data->philos[i].is_full) == 1)

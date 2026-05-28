@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:58:31 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 16:44:53 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 17:09:44 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void    philo_think(t_philo *philo)
     long    think_time;
     
     print_status(philo->data, philo->id, "is thinking");
-    if (philo->data->nb_must_meals % 2 != 0)
+    if (philo->data->nb_philos % 2 != 0)
     {
         think_time = philo->data->time_to_die - (get_time_in_s_ms()
             - get_long(&philo->data->monitor_lock, &philo->last_meal_time)
