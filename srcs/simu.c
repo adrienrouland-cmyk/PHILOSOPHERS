@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 23:44:18 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 10:36:36 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:13:12 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,13 @@ void    philo_simulation(t_data *data)
     i = 0;
     if (data->nb_philos == 1)
     {
+        pthread_create(&data->philos[0].tid, NULL, lone_philo_routine, &data->philos[0]);
+        pthread_create(&data->monitor_thread, NULL, monitor_routine, data);
         set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
         data->philos[0].last_meal_time = data->start_time;
-        pthread_create(&data->philos[0].tid, NULL, lone_philo_routine, &data->philos[0]);
+        set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
         return ;
     }
-    // Dans le cas du seul philosopher -> on crée une pthread avec une routine où il va juste print take a fork puis attendre de mourir
     else
     {
         while (i < data->nb_philos)
@@ -63,9 +64,7 @@ void    philo_simulation(t_data *data)
             pthread_create(&data->philos[i].tid, NULL, philo_routine, &data->philos[i]);
             i++;
         }
-        // Le while -> je crée tous mes threads et je leur attribue philo_routine.
         pthread_create(&data->monitor_thread, NULL, monitor_routine, data);
-        // Je crée mon monitor thread -> tous mes threads sont initialisés mtn
         set_long(&data->monitor_lock, &data->start_time, get_time_in_s_ms());
         i = 0;
         while (i < data->nb_philos)
@@ -73,8 +72,7 @@ void    philo_simulation(t_data *data)
             set_long(&data->monitor_lock, &data->philos[i].last_meal_time, data->start_time);
             i++;
         }
-        // J'attribue mtn le last meal time au start time pour tous mes threads.
         set_bool(&data->monitor_lock, &data->all_philos_ready, 1);
-        // Tous mes threads sont créés -> on va pouvoir commencer
+        return ; 
     }
 }

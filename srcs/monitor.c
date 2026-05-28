@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:01:40 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 11:54:38 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:06:09 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ void    *monitor_routine(void *arg)
     
     data = (t_data *)arg;
     wait_all_threads(data);
-
-    // Ici wait pour les (philo->id % 2 == 0) pour éviter deadlock ?
     
     while (is_end_simu(data) == 0)
     {

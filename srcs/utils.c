@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:04:53 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 11:04:57 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:07:03 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,16 @@ long    get_current_time_in_ms(t_data *data)
     return get_time_in_s_ms() - data->start_time;
 }
 
-int     ft_usleep(long milliseconds)
+int     ft_usleep(long milliseconds, t_data *data)
 {
     long    start_time;
 
     start_time = get_time_in_s_ms();
     while (get_time_in_s_ms() - start_time < milliseconds)
+    {
+        if (is_end_simu(data))
+            break;
         usleep(500);
+    }
     return (0);
 }

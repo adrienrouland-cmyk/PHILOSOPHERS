@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 00:49:15 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:07:31 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void    *monitor_routine(void *arg);
 /* UTILS */
 long    get_time_in_s_ms(void);
 long    get_current_time_in_ms(t_data *data);
-int     ft_usleep(long milliseconds);
+int     ft_usleep(long milliseconds, t_data *data);
 void    print_status(t_data *data, int philo_id, char *msg);
 int     check_stop_status(t_data *data);
 int is_all_philos_full(t_data *data);
