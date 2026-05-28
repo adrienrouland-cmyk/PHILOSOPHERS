@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/28 00:04:53 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 11:04:57 by arouland         ###   ########.fr       */
+/*   Created: 2026/04/19 10:01:16 by arouland          #+#    #+#             */
+/*   Updated: 2026/05/27 12:03:01 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,14 @@
 
 void    print_status(t_data *data, int philo_id, char *msg)
 {
-    long current_time;
-    int is_end;
-
-    is_end = is_end_simu(data);
-    // dans variable avant pour éviter deadlock
-    pthread_mutex_lock(&data->write_lock);
-    if (is_end == 0)
+    pthread_mutex_lock(&data->monitor_lock);
+    if (data->stop_simu == 0)
     {
-        current_time = get_current_time_in_ms(data);
-        printf("%ld %d %s\n", current_time, philo_id, msg);
+        pthread_mutex_lock(&data->write_lock);
+        printf("%ld %d %s\n", get_current_time_in_ms(data), philo_id, msg);
+        pthread_mutex_unlock(&data->write_lock);
     }
-    pthread_mutex_unlock(&data->write_lock);
-}
-// write lock car printf n'est pas thread safe
-
-void    wait_all_threads(t_data *data)
-{
-    while (get_bool(&data->monitor_lock, &data->all_philos_ready) == 0)
-        usleep(100);
-}
-
-int     is_end_simu(t_data *data)
-{
-    return (get_bool(&data->monitor_lock, &data->stop_simu));
+    pthread_mutex_unlock(&data->monitor_lock);
 }
 
 long    get_time_in_s_ms(void)
@@ -47,11 +31,15 @@ long    get_time_in_s_ms(void)
     gettimeofday(&time, NULL);
     return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
+// Renvoie un timestamp total en ms depuis 1970
+// 62496 -> 62 = secondes. 496 = ms.
 
 long    get_current_time_in_ms(t_data *data)
 {
     return get_time_in_s_ms() - data->start_time;
 }
+// Renvoie un timestamp total en ms depuis 1970
+// 62496 -> 62 = secondes. 496 = ms.
 
 int     ft_usleep(long milliseconds)
 {
@@ -62,3 +50,34 @@ int     ft_usleep(long milliseconds)
         usleep(500);
     return (0);
 }
+
+int     check_stop_status(t_data *data)
+{
+    int status;
+
+    pthread_mutex_lock(&data->monitor_lock);
+    status = data->stop_simu;
+    pthread_mutex_unlock(&data->monitor_lock);
+    return (status);
+}
+
+int is_all_philos_full(t_data *data)
+{
+    int i;
+
+    i = 0;
+    pthread_mutex_lock(&data->monitor_lock);
+    while (i < data->nb_philos)
+    {
+        if (data->philos[i].is_full == 0)
+        {
+            pthread_mutex_unlock(&data->monitor_lock);
+            return (0);
+        }
+        i++;
+    }
+    pthread_mutex_unlock(&data->monitor_lock);
+    return (1);
+}
+//usleep non précis donc on le fait par bloc de 500 microsecondes
+// Donc de 0,5 ms.

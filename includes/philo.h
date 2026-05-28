@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 12:03:08 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 00:49:15 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,23 @@ typedef struct s_data
 }	t_data;
 
 /* PARSING */
-int check_data(t_data *data);
+int check_data(t_data *data, char **argv, int is_overflow);
 int parse_data(t_data *data, char **argv);
 
 
 /* INIT */
-void    init_data(t_data *data);
+int    init_data(t_data *data);
 
-/* ROUTINE */
+/* SIMU */
+void    stop_clean_simulation(t_data *data);
+void    philo_simulation(t_data *data);
+
+/* PHILO ROUTINE */
+void    *lone_philo_routine(void *arg);
 void    *philo_routine(void *arg);
+
+/* MONITOR */
+void    *monitor_routine(void *arg);
 
 /* UTILS */
 long    get_time_in_s_ms(void);
@@ -75,5 +83,17 @@ int     ft_usleep(long milliseconds);
 void    print_status(t_data *data, int philo_id, char *msg);
 int     check_stop_status(t_data *data);
 int is_all_philos_full(t_data *data);
+int     is_end_simu(t_data *data);
+void    wait_all_threads(t_data *data);
+
+/* GET-SET */
+void    set_bool(pthread_mutex_t *mutex, int *dest, int value);
+int    get_bool(pthread_mutex_t *mutex, int *value);
+void    set_long(pthread_mutex_t *mutex, long *dest, long value);
+long    get_long(pthread_mutex_t *mutex, long *value);
+
+
+
+
 
 #endif

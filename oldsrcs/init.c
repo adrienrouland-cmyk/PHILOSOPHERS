@@ -5,23 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/27 22:24:17 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/27 23:41:35 by arouland         ###   ########.fr       */
+/*   Created: 2026/04/19 09:45:45 by arouland          #+#    #+#             */
+/*   Updated: 2026/05/27 12:49:59 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void    attrib_forks(t_data *data, int i)
-{
-    data->philos[i].left_fork = &data->forks[i];
-    if (i == data->nb_philos - 1)
-        data->philos[i].right_fork = &data->forks[0];
-    else
-        data->philos[i].right_fork = &data->forks[i + 1];
-}
-
-int    init_data(t_data *data)
+void    init_data(t_data *data)
 {
     int i;
 
@@ -30,10 +21,10 @@ int    init_data(t_data *data)
     data->all_philos_ready = 0;
     data->philos = malloc(sizeof(t_philo) * data->nb_philos);
     if (!data->philos)
-        return (1);
+        return ;
     data->forks = malloc(sizeof(t_lock) * data->nb_philos);
     if (!data->forks)
-        return (free(data->philos), 1);
+        return ;
     pthread_mutex_init(&data->write_lock, NULL);
     pthread_mutex_init(&data->monitor_lock, NULL);
     while (i < data->nb_philos)
@@ -44,8 +35,21 @@ int    init_data(t_data *data)
         data->philos[i].is_full = 0;
         data->philos[i].nb_meals = 0;
         data->philos[i].last_meal_time = 0;
-        attrib_forks(data, i);
+
+        // attribuer les forks aussi.
+        data->philos[i].left_fork = &data->forks[i];
+            // Pointeur pour copier l'adresse et éviter la copie
+                // car ces ressources sont partagées
+        if (i == data->nb_philos - 1)
+            data->philos[i].right_fork = &data->forks[0];
+        else
+            data->philos[i].right_fork = &data->forks[i + 1];
         i++;
     }
-    return (0);
 }
+// Création de tous mes philos, et init de leurs mutex.
+// Attribution des mutex.
+// On créera les phtread après dans start_simu.
+// Si 4 philos : philo 0 prend fourchettes 0 et 1
+// philo 1 prend fourchettes 1 et 2
+// 2 -> 2 et 3 ; 3 -> 3 et 4; 4 -> 4 et 0.
