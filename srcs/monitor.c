@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:01:40 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 16:06:09 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:38:16 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,6 @@
 
 int     is_philo_dead(t_data *data)
 {
-    // en 1er : Print death -> avec print_status
-    // Doit check et set_bool stop_simu à 1
-    // return
-
     int i;
     long time_since_last_meal;
     long current_time;
@@ -32,8 +28,8 @@ int     is_philo_dead(t_data *data)
         if (time_since_last_meal >= data->time_to_die)
         {
             pthread_mutex_lock(&data->write_lock);
-            printf("%ld %d has died\n", current_time - data->start_time, data->philos[i].id);
             set_bool(&data->monitor_lock, &data->stop_simu, 1);
+            printf("%ld %d has died\n", current_time - data->start_time, data->philos[i].id);
             pthread_mutex_unlock(&data->write_lock);
             return (1);
         }
