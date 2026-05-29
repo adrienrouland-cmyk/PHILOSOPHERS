@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 16:23:42 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 19:35:09 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/29 10:26:28 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/time.h>
-# include <unistd.h> // usleep
+# include <unistd.h>
 
 typedef struct s_data	t_data;
 

@@ -6,7 +6,7 @@
 /*   By: arouland <arouland@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/28 00:01:40 by arouland          #+#    #+#             */
-/*   Updated: 2026/05/28 20:08:51 by arouland         ###   ########.fr       */
+/*   Updated: 2026/05/29 10:27:15 by arouland         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	is_philo_dead(t_data *data)
 	long	current_time;
 	long	last_meal_time;
 
-	i = 0;
-	while (i < data->nb_philos)
+	i = -1;
+	while (++i < data->nb_philos)
 	{
 		current_time = get_time_in_s_ms();
 		last_meal_time = get_long(&data->monitor_lock,
@@ -30,14 +30,13 @@ int	is_philo_dead(t_data *data)
 		{
 			pthread_mutex_lock(&data->write_lock);
 			pthread_mutex_lock(&data->monitor_lock);
-            data->stop_simu = 1;
+			data->stop_simu = 1;
 			printf("%ld %d has died\n", current_time - data->start_time,
 				data->philos[i].id);
 			pthread_mutex_unlock(&data->monitor_lock);
 			pthread_mutex_unlock(&data->write_lock);
 			return (1);
 		}
-		i++;
 	}
 	return (0);
 }
